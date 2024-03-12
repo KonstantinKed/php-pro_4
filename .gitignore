@@ -1,0 +1,7 @@
+/vendor/
+.idea
+/logs/
+/docker/databases/shutdown_handler.sh
+/storage/db.json
+/var/logs
+.env
