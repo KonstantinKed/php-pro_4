@@ -2,19 +2,20 @@
 
 namespace App\Shortener\SuportActions;
 
+use App\Shortener\ValueObjects\ShortAndUrl;
 use Random\RandomException;
 
 class CodeGenerator
 {
     const DEFAULT_CODE_LENGTH = 8;
-    public function __construct(protected string $url,  protected string $length = self::DEFAULT_CODE_LENGTH)
-    {
-    }
+    public function __construct(protected ShortAndUrl $shortAndUrl,
+                                protected string $url,
+                                protected string $length = self::DEFAULT_CODE_LENGTH){}
 
     /**
      * @throws RandomException
      */
-    public function generateCode(string $url): string {
+    public function generateCode(string $url): ShortAndUrl {
         $path = parse_url($url, PHP_URL_PATH);
         $pathParts = explode('/', trim($path, '/'));
         $resourceName = end($pathParts);
@@ -25,6 +26,9 @@ class CodeGenerator
         }
         $randomData = random_bytes(10);
         $hash = hash('sha256', $mix . $randomData);
-        return substr($hash, 0, $this->length);
+        $short = substr($hash, 0, $this->length);
+        $this->shortAndUrl->setShort($short);
+        $this->shortAndUrl->setUrl($url);
+        return $this->shortAndUrl;
     }
 }
