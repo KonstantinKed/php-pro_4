@@ -2,12 +2,13 @@
 
 namespace App\Shortener;
 
-use App\Shortener\Exceptions\CodeNotFoundException;
+use App\Shortener\Exceptions\DataNotFoundException;
 use App\Shortener\Interfaces\IUrlDecoder;
 use App\Shortener\Interfaces\IUrlEncoder;
 use App\Shortener\Interfaces\IUrlValidator;
 use App\Shortener\SuportActions\CodeFileSaver;
 use App\Shortener\SuportActions\CodeGenerator;
+use InvalidArgumentException;
 use JsonException;
 use Random\RandomException;
 
@@ -16,10 +17,7 @@ class UrlEncodeDecode implements IUrlEncoder, IUrlDecoder
 
     public function __construct(protected IUrlValidator $validator,
                                 protected CodeGenerator $generator,
-                                protected CodeFileSaver $saver)
-    {
-    }
-
+                                protected CodeFileSaver $codeSaver){}
 
     /**
      * @inheritDoc
@@ -40,21 +38,28 @@ class UrlEncodeDecode implements IUrlEncoder, IUrlDecoder
 //        $this->saver->saveShortAndUrl($shortAndUrl);
 
         try {
-            $this->saver->getCodeByUrl($url);
-        } catch (CodeNotFoundException) {
+            $this->codeSaver->getCodeByUrl($url);
+        } catch (DataNotFoundException $e) {
             $shortAndUrl = $this->generator->generateCode($url);;
-            $this->saver->saveShortAndUrl($shortAndUrl);
+            $this->codeSaver->saveShortAndUrl($shortAndUrl);
         }
-
-
-        // save
-
+        return $shortAndUrl->getShort();
 
     }
+
+    /**
+     * @throws JsonException
+     */
     public function decode(string $code): string
     {
-        // return url
+        try {
+            $url = $this->codeSaver->getUrlByCode($code);
+        } catch (DataNotFoundException $e) {
+            throw new InvalidArgumentException(
+                $e->getMessage()
+            );
+        }
+        return $url;
     }
-
 
 }
