@@ -5,7 +5,7 @@ namespace App\Shortener\ValueObjects;
 class ShortAndUrl
 {
 
-    public function __construct(protected string $short, protected string $url) {}
+    public function __construct(protected string $url, protected string $short = '') {}
 
     public function getUrl(): string
     {

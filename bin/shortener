@@ -1,0 +1,45 @@
+#!/usr/bin/env php
+
+<?php
+
+use App\Shortener\SuportActions\CodeFileSaver;
+use App\Shortener\SuportActions\CodeGenerator;
+use App\Shortener\SuportActions\SimpleUrlValidator;
+use App\Shortener\UrlEncodeDecode;
+use GuzzleHttp\Client;
+use App\Shortener\ValueObjects\ShortAndUrl;
+use Random\RandomException;
+
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+$filepath = __DIR__ . '/../storage/shortener.json';
+
+$inputAction = readline('Виберіть дію: [S]hort OR [U]rl' . PHP_EOL);
+
+$codeSaver = new CodeFileSaver($filepath);
+$urlValidator = new SimpleUrlValidator(new Client());
+$codeGenerator = new CodeGenerator();
+$result = new UrlEncodeDecode($urlValidator, $codeGenerator, $codeSaver);
+
+
+if ($inputAction === "S") {
+    $inputUrl = readline("Введіть URL:");
+    $model = new ShortAndUrl($inputUrl);
+    try {
+        echo 'Скорочений код: ' . $result->encode($inputUrl) . PHP_EOL;
+        echo 'Повний URL: ' . $model->getUrl() . PHP_EOL;
+    } catch (RandomException $e) {
+        echo "Random Exception";
+    }
+} elseif ($inputAction === "U") {
+    $inputCode = readline("Введіть код:");
+    try {
+        echo 'Повний URL: ' . $result->decode($inputCode) . PHP_EOL;
+    } catch (JsonException $e) {
+    }
+} else {
+    echo 'Неправильний вибір! ' . PHP_EOL;
+    exit();
+}
+

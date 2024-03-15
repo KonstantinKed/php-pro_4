@@ -14,7 +14,8 @@ class Email {
         return $this->email;
     }
 }
-class Client {
+class Client extends \GuzzleHttp\Client
+{
     protected $name;
     protected $email;
     public function __construct($name, Email $email) {

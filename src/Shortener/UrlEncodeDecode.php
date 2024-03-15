@@ -22,7 +22,6 @@ class UrlEncodeDecode implements IUrlEncoder, IUrlDecoder
     /**
      * @inheritDoc
      * @throws RandomException
-     * @throws JsonException
      */
     public function encode(string $url): string
     {
@@ -38,14 +37,18 @@ class UrlEncodeDecode implements IUrlEncoder, IUrlDecoder
 //        $this->saver->saveShortAndUrl($shortAndUrl);
 
         try {
-            $this->codeSaver->getCodeByUrl($url);
-        } catch (DataNotFoundException $e) {
-            $shortAndUrl = $this->generator->generateCode($url);;
-            $this->codeSaver->saveShortAndUrl($shortAndUrl);
+            $code = $this->codeSaver->getCodeByUrl($url);
+        } catch (DataNotFoundException) {
+            $code = $this->generator->generateCode($url);
+//            $this->codeSaver->saveShortAndUrl($shortAndUrl);
+            $this->codeSaver->saveShortAndUrl($code, $url);
         }
-        return $shortAndUrl->getShort();
+//        return $shortAndUrl->getShort();
+        return $code;
 
     }
+
+
 
     /**
      * @throws JsonException

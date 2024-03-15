@@ -4,6 +4,8 @@ namespace App\Shortener\SuportActions;
 
 use App\Shortener\Interfaces\IUrlValidator;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
 use InvalidArgumentException;
@@ -35,8 +37,8 @@ class SimpleUrlValidator implements IUrlValidator
     {
         try {
             $response = $this->client->request('HEAD', $url);
-            return in_array($response->getStatusCode(),[200, 201, 301, 302]);
-        } catch (RequestException $e) {
+            return (!empty($response->getStatusCode()) && in_array($response->getStatusCode(),[200, 201, 301, 302]));
+        } catch (ConnectException|ClientException $e) {
             throw new InvalidArgumentException($e->getMessage(), $e->getCode());
         }
     }
