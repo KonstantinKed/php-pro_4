@@ -1,10 +1,5 @@
-CREATE TABLE city_catalog (
-                              id INT AUTO_INCREMENT PRIMARY KEY,
-                              new_post_city_id VARCHAR(255),
-                              justin_city_id INT,
-                              ukr_poshta_city_id INT,
-                              slug VARCHAR(255)
-);
+# ALTER TABLE catalog_city
+#     MODIFY id INT AUTO_INCREMENT PRIMARY KEY;
 
 CREATE TABLE area_catalog (
                               id INT AUTO_INCREMENT PRIMARY KEY,
@@ -25,7 +20,7 @@ CREATE TABLE translation (
                              INDEX (city_id),
                              INDEX (area_id),
                              INDEX (region_id),
-                             FOREIGN KEY (city_id) REFERENCES city_catalog(id),
+                             FOREIGN KEY (city_id) REFERENCES base.catalog_city(id),
                              FOREIGN KEY (area_id) REFERENCES area_catalog(id),
                              FOREIGN KEY (region_id) REFERENCES region_catalog(id)
 );
@@ -34,7 +29,7 @@ CREATE TABLE timestamp (
                            city_id INT PRIMARY KEY,
                            created_at DATETIME,
                            updated_at DATETIME,
-                           FOREIGN KEY (city_id) REFERENCES city_catalog(id)
+                           FOREIGN KEY (city_id) REFERENCES catalog_city(id)
 );
 
 INSERT INTO area_catalog (name)
@@ -45,24 +40,21 @@ INSERT INTO region_catalog (name)
 SELECT DISTINCT region_name_uk
 FROM catalog_city;
 
-INSERT INTO city_catalog (new_post_city_id, justin_city_id, ukr_poshta_city_id, slug)
-SELECT DISTINCT new_post_city_id, justin_city_id, ukr_poshta_city_id, slug
-FROM catalog_city;
 
 INSERT INTO timestamp (city_id, created_at, updated_at)
 SELECT city.id, old.created_at, old.updated_at
 FROM catalog_city old
-         JOIN city_catalog city ON city.slug = old.slug;
+         JOIN catalog_city city ON city.slug = old.slug;
 
 
 INSERT INTO translation (city_id, language, text)
 SELECT new.id, 'uk', old.name_uk
 FROM catalog_city old
-         JOIN city_catalog new ON new.slug = old.slug
+         JOIN catalog_city new ON new.slug = old.slug
 UNION ALL
 SELECT new.id, 'ru', old.name_ru
 FROM catalog_city old
-         JOIN city_catalog new ON new.slug = old.slug;
+         JOIN catalog_city new ON new.slug = old.slug;
 
 INSERT INTO translation (area_id, language, text)
 SELECT area.id, 'uk', area.name
@@ -80,7 +72,12 @@ SELECT region.id, 'ru', old.region_name_ru
 FROM catalog_city old
          JOIN region_catalog region ON region.name = old.region_name_uk;
 
-RENAME TABLE catalog_city TO catalog_city_old;
-
-RENAME TABLE city_catalog TO catalog_city;
-# TRUNCATE TABLE catalog_city_old
+ALTER TABLE catalog_city
+    DROP COLUMN name_uk,
+    DROP COLUMN name_ru,
+    DROP COLUMN region_name_uk,
+    DROP COLUMN area_name_uk,
+    DROP COLUMN created_at,
+    DROP COLUMN updated_at,
+    DROP COLUMN region_name_ru,
+    DROP COLUMN area_name_ru;
