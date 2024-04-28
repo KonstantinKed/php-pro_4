@@ -4,7 +4,8 @@
     "require": {
         "php": "^8.2",
         "guzzlehttp/guzzle": "^7.8",
-      "ext-readline": "*"
+        "illuminate/database": "v11.*",
+        "ext-readline": "*"
     }
     ,
 

@@ -1,0 +1,88 @@
+#!/usr/bin/env php
+<?php
+
+use App\Calculator\Actions\Sum;
+use App\Calculator\Calculator;
+use App\Commands\CalculatorCommand;
+use App\Commands\HelloCommand;
+use App\Commands\HelloUserCommand;
+use App\Commands\TestCommand;
+use App\Commands\UrlDecodeCommand;
+use App\Commands\UrlEncodeCommand;
+use App\Core\CLI\CLIWriter;
+use App\Core\CLI\CommandHandler;
+use App\Core\CLI\Commands\HelpCommand;
+use App\Core\ConfigHandler;
+use App\Shortener\{
+    FileRepository,
+    Helpers\UrlValidator,
+    UrlConverter
+};
+use GuzzleHttp\Client;
+use Monolog\Handler\StreamHandler;
+use Monolog\Level;
+use Monolog\Logger;
+use UfoCms\ColoredCli\CliColor;
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+$configs = require_once __DIR__ . '/../config/params.php';
+$configHandler = ConfigHandler::getInstance()->addConfigs($configs);
+
+
+$monolog = new Logger($configHandler->get('monolog.channel'));
+$monolog
+    ->pushHandler(new StreamHandler($configHandler->get('monolog.level.error'), Level::Error))
+    ->pushHandler(new StreamHandler($configHandler->get('monolog.level.info'), Level::Info));
+
+
+$fileRepository = new FileRepository($configHandler->get('dbFile'));
+$urlValidator = new UrlValidator(new Client());
+$converter = new UrlConverter(
+    $fileRepository,
+    $urlValidator,
+    $configHandler->get('urlConverter.codeLength')
+);
+
+$commandUrlEncode = new UrlEncodeCommand($converter);
+$commandUrlDecode = new UrlDecodeCommand($converter);
+$commandTest = new TestCommand();
+
+$calc = new Calculator();
+
+
+$calc->actionRegistration(new Sum());
+
+$calcCommand = new CalculatorCommand($calc);
+
+$helpCommand = new HelpCommand(
+    [
+        $commandUrlEncode,
+        $commandUrlDecode,
+        $commandTest,
+        $calcCommand
+    ]
+);
+$app = new CommandHandler($helpCommand);
+
+$app->addCommand($commandUrlEncode);
+$app->addCommand($commandUrlDecode);
+$app->addCommand($commandTest);
+$app->addCommand($helpCommand);
+$app->addCommand(new HelloCommand());
+$app->addCommand(new HelloUserCommand());
+$app->addCommand($calcCommand);
+
+try {
+    $app->handle($argv, function (array $params, \Throwable $e) use ($monolog) {
+        $monolog->error($e->getMessage());
+
+        CLIWriter::getInstance()->setColor(CliColor::RED)
+            ->writeLn($e->getMessage());
+
+        CLIWriter::getInstance()->write($e->getFile() . ': ')
+            ->writeLn($e->getLine());
+    });
+} catch (\Throwable $e) {
+    echo $e->getMessage();
+}
