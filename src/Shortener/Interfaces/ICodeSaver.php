@@ -2,7 +2,9 @@
 
 namespace App\Shortener\Interfaces;
 
+use App\Shortener\Exceptions\DataNotFoundException;
 use App\Shortener\ValueObjects\ShortAndUrl;
+use JsonException;
 
 interface ICodeSaver
 {
@@ -10,5 +12,9 @@ interface ICodeSaver
 
     public function saveShortAndUrl(string $url, string $code): bool;
 
-    // income object with data,
+    /**
+     * @throws DataNotFoundException
+     */
+    public function getCodeByUrl(string $url): ?string;
+    public function getUrlByCode(string $code): ?string;
 }

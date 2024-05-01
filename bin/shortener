@@ -2,6 +2,7 @@
 
 <?php
 
+use App\Shortener\SuportActions\CodeDBSaver;
 use App\Shortener\SuportActions\CodeFileSaver;
 use App\Shortener\SuportActions\CodeGenerator;
 use App\Shortener\SuportActions\SimpleUrlValidator;
@@ -9,22 +10,28 @@ use App\Shortener\UrlEncodeDecode;
 use GuzzleHttp\Client;
 use App\Shortener\ValueObjects\ShortAndUrl;
 use Random\RandomException;
+use Illuminate\Database\Capsule\Manager;
 
-
+$container = require_once __DIR__ . '/../src/bootstrap.php';
+$container->get(Manager::class);
 require_once __DIR__ . '/../vendor/autoload.php';
 
 $filepath = __DIR__ . '/../storage/shortener.json';
 
 $inputAction = readline('Виберіть дію: [S]hort OR [U]rl' . PHP_EOL);
 
-$codeSaver = new CodeFileSaver($filepath);
+//------ SELECT REPOSITORY ----------//
+//$codeSaver = new CodeFileSaver($filepath);
+$codeSaver = new CodeDBSaver();
+//___________________________________//
+
 $urlValidator = new SimpleUrlValidator(new Client());
 $codeGenerator = new CodeGenerator();
 $result = new UrlEncodeDecode($urlValidator, $codeGenerator, $codeSaver);
 
 
 if ($inputAction === "S") {
-    $inputUrl = readline("Введіть URL:");
+    $inputUrl = trim(readline("Введіть URL:"));
     $model = new ShortAndUrl($inputUrl);
     try {
         echo 'Скорочений код: ' . $result->encode($inputUrl) . PHP_EOL;
@@ -33,7 +40,7 @@ if ($inputAction === "S") {
         echo "Random Exception";
     }
 } elseif ($inputAction === "U") {
-    $inputCode = readline("Введіть код:");
+    $inputCode = trim(readline("Введіть код:"));
     try {
         echo 'Повний URL: ' . $result->decode($inputCode) . PHP_EOL;
     } catch (JsonException $e) {

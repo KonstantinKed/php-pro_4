@@ -44,19 +44,6 @@ class CodeFileSaver implements ICodeSaver
 
     /**
      * @throws JsonException
-     */
-    public function getUrlByCode(string $code): ?string {
-        if (!file_exists($this->filePath)) {
-            return null;
-        }
-
-        $data = json_decode(file_get_contents($this->filePath), true, 512, JSON_THROW_ON_ERROR);
-
-        return $data[$code] ?? null;
-    }
-
-    /**
-     * @throws JsonException
      * @throws DataNotFoundException
      */
     public function getCodeByUrl(string $url): ?string {
@@ -70,6 +57,24 @@ class CodeFileSaver implements ICodeSaver
         }
 
         return $code;
+    }
+    /**
+     * @throws JsonException
+     */
+    public function getUrlByCode(string $code): ?string {
+        if (!file_exists($this->filePath)) {
+            return null;
+        }
+        $data = file_get_contents($this->filePath);
+        $data = json_decode($data, true, 512, JSON_THROW_ON_ERROR);
+        print_r($data);
+        if (!$url = array_search($code, $data, true)) {
+            throw new DataNotFoundException();
+        }
+
+        return $url;
+
+
     }
 
 }

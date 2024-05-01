@@ -14,23 +14,6 @@ class CodeGenerator
     /**
      * @throws RandomException
      */
-//    public function generateCode($url): ShortAndUrl {
-//        $path = parse_url($url, PHP_URL_PATH);
-//        $pathParts = explode('/', trim($path, '/'));
-//        $resourceName = end($pathParts);
-//        if (strlen($resourceName) > 3) {
-//            $mix = $resourceName[0] . $resourceName[2] . substr($resourceName, -1);
-//        } else {
-//            $mix = str_pad($resourceName, 3, '_');
-//        }
-//        $randomData = random_bytes(10);
-//        $hash = hash('sha256', $mix . $randomData);
-//        $short = substr($hash, 0, $this->length);
-////        $this->shortAndUrl->setShort($short);
-////        $this->shortAndUrl->setUrl($this->url);
-//        return $shortAndUrl;
-//    }
-
     public function generateCode($url): string {
         $pathParts = explode('/', trim($url, '/'));
         $resourceName = end($pathParts);
@@ -41,8 +24,6 @@ class CodeGenerator
         }
         $randomData = random_bytes(10);
         $hash = hash('sha256', $mix . $randomData);
-        //        $this->shortAndUrl->setShort($short);
-//        $this->shortAndUrl->setUrl($this->url);
         return substr($hash, 0, $this->length);
     }
 }

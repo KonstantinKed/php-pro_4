@@ -39,6 +39,7 @@ $container->get(Manager::class);  // main connection trough config/services
 //$user->setName('sdfsdfs');
 
 //$user = new User('Артур','user7@');
+$users = User::all();
 
 $user = User::find(1);
 //$phone1 = $user->phones[0];
