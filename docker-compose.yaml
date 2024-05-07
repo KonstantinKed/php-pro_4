@@ -34,15 +34,20 @@ services:
     volumes:
       - ./docker/databases/mysql_dump:/docker-entrypoint-initdb.d
 
-#  nginx:
-#    image: nginx:latest
-#    container_name: nginx_${PROJECT_NAME}
-#    ports:
-#      - ${HTTP_PORT}:80
-#      - ${HTTPS_PORT}:443
-#    volumes:
-#      - ./:${WORKDIR}
-#      - ./docker/configs/nginx:/etc/nginx/conf.d
-#      - ./var/logs/nginx:/var/log/nginx
-#    links:
-#      - php
+  nginx:
+    image: nginx:latest
+    container_name: nginx_${PROJECT_NAME}
+    environment:
+        WORKDIR: ${WORKDIR}
+        HTTP_PORT: ${HTTP_PORT}
+        HTTPS_PORT: ${HTTPS_PORT}
+    ports:
+      - ${HTTP_PORT}:80
+      - ${HTTPS_PORT}:443
+    volumes:
+      - ./:${WORKDIR}
+      - ./docker/configs/nginx:/etc/nginx/conf.d
+      - ./docker/configs/nginx/project.conf.template:/etc/nginx/templates/project.conf.template
+      - ./logs/nginx:/var/log/nginx
+    links:
+      - php
