@@ -1,6 +1,5 @@
 <?php
 
-
 use App\Core\DI\Container;
 use App\Core\DI\Enums\ServiceConfigArrayKeys as S;
 use App\Core\DI\ValueObjects\ServiceObject;
@@ -81,37 +80,37 @@ return [
             }
         },
     ],
-//    "monolog.streamHandler.info" => [
-//        S::CLASSNAME => StreamHandler::class,
-//        S::ARGUMENTS => [
-//            '%monolog.level.info',
-//            Level::Info,
-//        ],
-//        S::TAGS => ['monolog.stream'],
-//    ],
-//    "monolog.streamHandler.error" => [
-//        S::CLASSNAME => StreamHandler::class,
-//        S::ARGUMENTS => [
-//            '%monolog.level.error',
-//            Level::Error,
-//        ],
-//        S::TAGS => ['monolog.stream'],
-//    ],
-//    "monolog.streamHandler.debug" => [
-//        S::CLASSNAME => StreamHandler::class,
-//        S::ARGUMENTS => [
-//            '%monolog.level.debug',
-//            Level::Debug,
-//        ],
-//        S::TAGS => ['monolog.stream'],
-//    ],
-//    "monolog.streamHandler.notice" => [
-//        S::CLASSNAME => StreamHandler::class,
-//        S::ARGUMENTS => [
-//            '%monolog.level.notice',
-//            Level::Notice,
-//        ],
-//        S::TAGS => ['monolog.stream'],
-//    ],
+    "monolog.streamHandler.info" => [
+        S::CLASSNAME => StreamHandler::class,
+        S::ARGUMENTS => [
+            '%monolog.level.info',
+            Level::Info,
+        ],
+        S::TAGS => ['monolog.stream'],
+    ],
+    "monolog.streamHandler.error" => [
+        S::CLASSNAME => StreamHandler::class,
+        S::ARGUMENTS => [
+            '%monolog.level.error',
+            Level::Error,
+        ],
+        S::TAGS => ['monolog.stream'],
+    ],
+    "monolog.streamHandler.debug" => [
+        S::CLASSNAME => StreamHandler::class,
+        S::ARGUMENTS => [
+            '%monolog.level.debug',
+            Level::Debug,
+        ],
+        S::TAGS => ['monolog.stream'],
+    ],
+    "monolog.streamHandler.notice" => [
+        S::CLASSNAME => StreamHandler::class,
+        S::ARGUMENTS => [
+            '%monolog.level.notice',
+            Level::Notice,
+        ],
+        S::TAGS => ['monolog.stream'],
+    ],
 
 ];

@@ -3,14 +3,19 @@
     "type": "project",
     "require": {
         "php": "^8.2",
+        "psr/container": "*",
+        "ufo-cms/colored_cli": "^1.0",
+        "monolog/monolog": "3.*",
         "guzzlehttp/guzzle": "^7.8",
+        "nesbot/carbon": "^3.0",
+        "ext-mbstring": "*",
+        "ext-pdo": "*",
         "illuminate/database": "v11.*",
         "ext-readline": "*",
-        "ufo-cms/colored_cli": "^1.0",
-        "doctrine/orm": "^3.1"
+        "doctrine/orm": "^3.1",
+        "symfony/cache": "*"
     }
     ,
-
     "license": "MIT",
     "autoload": {
         "psr-4": {

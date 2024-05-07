@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Core\DI\Ecxeptions;
+namespace App\Core\DI\Exceptions;
 
 use InvalidArgumentException;
 use Psr\Container\NotFoundExceptionInterface;

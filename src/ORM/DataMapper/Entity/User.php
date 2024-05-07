@@ -40,7 +40,6 @@ class User implements \JsonSerializable
     private int $status = 0;
 
 
-
     /**
      * @param string $login
      * @param string $password

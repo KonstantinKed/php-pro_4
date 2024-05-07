@@ -20,6 +20,8 @@ class UserController
     }
     public function userInfo(int $id): string
     {
-        return 'info for ' . $id;
+//        return 'info for ' . $id;
+        $user = $this->userRepo->getById($id);
+        return $user->getLogin() . '-' . $user->getStatus();
     }
 }

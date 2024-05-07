@@ -2,8 +2,8 @@
 
 namespace App\Core\DI;
 
-use App\Core\DI\Ecxeptions\ContainerException;
-use App\Core\DI\Ecxeptions\ServiceNotFoundException;
+use App\Core\DI\Exceptions\ContainerException;
+use App\Core\DI\Exceptions\ServiceNotFoundException;
 use App\Core\DI\Enums\RefResolver;
 use App\Core\DI\Interfaces\IContainerInterface;
 use App\Core\DI\ValueObjects\ServiceObject;

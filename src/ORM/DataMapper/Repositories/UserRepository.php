@@ -7,6 +7,7 @@ use App\ORM\DataMapper\Entity\Phone;
 use App\ORM\DataMapper\Entity\User;
 use App\ORM\DataMapper\Traits\BaseRepository;
 use Doctrine\ORM\EntityRepository;
+use InvalidArgumentException;
 
 /**
  * @method User getById($id): User
@@ -24,7 +25,7 @@ class UserRepository extends EntityRepository
     {
         $user = $this->findOneBy(['id' => $id]);
         if (is_null($user)) {
-            throw new \InvalidArgumentException();
+            throw new InvalidArgumentException();
         }
         return $user;
     }

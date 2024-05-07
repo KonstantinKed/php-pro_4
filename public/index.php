@@ -8,9 +8,13 @@ use App\Core\Web\Exceptions\RouteNotFoundException;
 
 $container = require_once __DIR__ . '/../src/bootstrap.php';
 
-function getRoute(string $uri): array
-{
-    return match ($uri) {
+$uri = $_SERVER['REQUEST_URI'];
+$path = substr($uri, 1);
+$pathParts = explode('/', $path);
+
+
+try {
+    $actionInfo = match (array_shift($pathParts)) {
         'user' => [UserController::class => 'getInfo'],
         'user/activate' => [UserController::class => 'activate'],
         'users' => [UserController::class => 'getAll'],
@@ -18,32 +22,55 @@ function getRoute(string $uri): array
         'calc' => [CalcController::class => 'action'],
         default => throw new RouteNotFoundException("Route $uri is not found")
     };
-}
-
-$uri = $_SERVER['REQUEST_URI'];
-$path = substr($uri, 1);
-$pathParts = explode('/', $path);
-
-
-try {
-
-    try {
-        $actionInfo = getRoute($path);
-    } catch (RouteNotFoundException) {
-        $actionInfo = getRoute(array_shift($pathParts));
-    }
     $class = array_key_first($actionInfo);
     $controller = $container->get($class);
     $method = current($actionInfo);
 
     echo call_user_func_array([$controller, $method], $pathParts);
 
-} catch (\Exception $e) {
+} catch (Exception $e) {
     $controller = new ErrorController();
     echo $controller->error404($uri);
-} catch (\Error $e) {
+} catch (Error $e) {
     $controller = new ErrorController();
     echo $controller->error500();
 
 }
+
+
+//
+//
+//function getRoute(string $uri): array
+//{
+//    return match ($uri) {
+//        'user' => [UserController::class => 'getInfo'],
+//        'user/activate' => [UserController::class => 'activate'],
+//        'users' => [UserController::class => 'getAll'],
+//        'users/active' => [UserController::class => 'getAllActive'],
+//        'calc' => [CalcController::class => 'action'],
+//        default => throw new RouteNotFoundException("Route $uri is not found")
+//    };
+//}
+//
+//try {
+//
+//    try {
+//        $actionInfo = getRoute($path);
+//    } catch (RouteNotFoundException) {
+//        $actionInfo = getRoute(array_shift($pathParts));
+//    }
+//    $class = array_key_first($actionInfo);
+//    $controller = $container->get($class);
+//    $method = current($actionInfo);
+//
+//    echo call_user_func_array([$controller, $method], $pathParts);
+//
+//} catch (\Exception $e) {
+//    $controller = new ErrorController();
+//    echo $controller->error404($uri);
+//} catch (\Error $e) {
+//    $controller = new ErrorController();
+//    echo $controller->error500();
+//
+//}
 

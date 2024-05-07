@@ -16,11 +16,17 @@ class ErrorController implements IWebController
         return 'server error';
     }
 
+//    #[Route('/404')]
+//    public function error404(RequestInterface $request): ResponseInterface
+//    {
+//        $uri = $request->getUri()->getPath();
+//        return new Response(404,[], 'uri not found: ' . $uri);
+//    }
+
     #[Route('/404')]
-    public function error404(RequestInterface $request): ResponseInterface
+    public function error404(string $uri): string
     {
-        $uri = $request->getUri()->getPath();
-        return new Response(404,[], 'uri not found: ' . $uri);
+        return 'uri not found: ' . $uri;
     }
 }
 
