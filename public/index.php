@@ -4,6 +4,7 @@
 use App\Controllers\CalcController;
 use App\Controllers\ErrorController;
 use App\Controllers\ShortenerController;
+use App\Controllers\ShortenerController_olf;
 use App\Controllers\UserController;
 use App\Core\Web\Exceptions\RouteNotFoundException;
 use App\ORM\DataMapper\Entity\Shortener;
@@ -20,7 +21,8 @@ $uriLink = $_GET['url'];
 
 try {
     $em = $container->get(EntityManager::class);
-    $controller = new ShortenerController($em);
+//    $controller = new ShortenerController($em);
+    $controller = new ShortenerController_olf($em);
     echo $controller->action($uriLink);
 
 } catch (\Exception $e) {
