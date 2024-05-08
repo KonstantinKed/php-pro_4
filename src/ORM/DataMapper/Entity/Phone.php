@@ -13,9 +13,10 @@ use JsonSerializable;
 #[ORM\Entity]
 #[ORM\Table(name: 'phones')]
 #[PrivateProperties([])]
-class Phone implements JsonSerializable
+//class Phone implements JsonSerializable
+class Phone
 {
-    use JsonSerializableTrait;
+//    use JsonSerializableTrait;
 
     #[ORM\Id]
     #[ORM\Column(type: Types::INTEGER)]

@@ -1,7 +1,8 @@
 #!/usr/bin/env php
 
 <?php
-
+use Doctrine\ORM\EntityManager;
+use App\ORM\DataMapper\Entity\Shortener;
 use App\Shortener\SuportActions\CodeDBSaver;
 use App\Shortener\SuportActions\CodeFileSaver;
 use App\Shortener\SuportActions\CodeGenerator;
@@ -13,21 +14,25 @@ use Random\RandomException;
 use Illuminate\Database\Capsule\Manager;
 
 $container = require_once __DIR__ . '/../src/bootstrap.php';
-$container->get(Manager::class);
-require_once __DIR__ . '/../vendor/autoload.php';
+//$container->get(Manager::class);
+//require_once __DIR__ . '/../vendor/autoload.php';
 
 $filepath = __DIR__ . '/../storage/shortener.json';
 
 $inputAction = readline('Виберіть дію: [S]hort OR [U]rl' . PHP_EOL);
 
 //------ SELECT REPOSITORY ----------//
-//$codeSaver = new CodeFileSaver($filepath);
-$codeSaver = new CodeDBSaver();
+//$codeSaver = new CodeFileSaver($filepath);  SAVE TO FILE
+//$codeSaver = new CodeDBSaver();   - ACTIVE RECORD
+
+$em = $container->get(EntityManager::class);
+$shortenerRepo = $em->getRepository(Shortener::class);
+
 //___________________________________//
 
 $urlValidator = new SimpleUrlValidator(new Client());
 $codeGenerator = new CodeGenerator();
-$result = new UrlEncodeDecode($urlValidator, $codeGenerator, $codeSaver);
+$result = new UrlEncodeDecode($urlValidator, $codeGenerator, $shortenerRepo);
 
 
 if ($inputAction === "S") {

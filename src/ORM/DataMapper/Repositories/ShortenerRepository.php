@@ -4,56 +4,66 @@
 namespace App\ORM\DataMapper\Repositories;
 
 use App\ORM\DataMapper\Entity\Phone;
+use App\ORM\DataMapper\Entity\Shortener;
 use App\ORM\DataMapper\Entity\User;
 use App\ORM\DataMapper\Traits\BaseRepository;
+use App\Shortener\Exceptions\DataNotFoundException;
+use App\Shortener\Interfaces\ICodeSaver;
+use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\EntityRepository;
 
-/**
- * @method User getById($id): User
- */
-class ShortenerRepository extends EntityRepository
+
+class ShortenerRepository extends EntityRepository implements ICodeSaver
 {
-    use BaseRepository;
+//    use BaseRepository;
 
-    public function findActive(bool $sortAsc = true): array
+    public function getById(int $id): object
     {
-        return $this->findBy(['status' => User::STATUS_ACTIVE], ['id' => $sortAsc ? 'ASC' : 'DESC']);
-    }
-
-    public function getAllDataById(int $id): User
-    {
-        $user = $this->findOneBy(['id' => $id]);
-        if (is_null($user)) {
-            throw new \InvalidArgumentException();
+        $entity = $this->findOneBy(['id' => $id]);
+        if (is_null($entity)) {
+            throw new EntityNotFoundException('Entity with id: ' . $id . ' is not found');
         }
-        return $user;
+        return $entity;
+
     }
 
-    public function getAllDataById2(int $id): User
+    /**
+     * @param ?object $entity
+     * @return $this
+     */
+    public function save(?object $entity = null): self
     {
-        $qb = $this->createQueryBuilder('u')
-            ->leftJoin(Phone::class, 'p', 'WITH', 'p.user = u.id')
-            ->where('u.id = :id')->setParameter('id', $id)
-            ->orWhere('u.status = :status')->setParameter('status', User::STATUS_ACTIVE)
-            ->setMaxResults(1);
-
-        $query = $qb->getQuery();
-        $r = $query->getResult();
-        return $query->getResult()[0];
+        if (is_object($entity)) {
+            $this->getEntityManager()->persist($entity);
+        }
+        $this->getEntityManager()->flush();
+        return $this;
     }
 
-    public function getBanList()
+    public function getCodeByUrl(string $url): ?string
     {
-        $qb = $this->createQueryBuilder('u')
-            ->where('u.status = :status')
-            ->setParameter('status', User::STATUS_DISABLED)
-            ->orderBy('u.login', 'ASC');
-
-        $query = $qb->getQuery();
-        $sql = $query->getSQL();
-
-        return $query->getResult();
+        $entity = $this->findOneBy(['url' => $url]);
+        if (is_null($entity)) {
+            return throw new DataNotFoundException();
+        }
+        return $entity->getShortCode();
     }
 
+    public function getUrlByCode(string $code): ?string
+    {
+        $entity = $this->findOneBy(['short_code' => $code]);
+        if (is_null($entity)) {
+            return throw new DataNotFoundException();
+        }
+        return $entity->getUrl();
+    }
+    public function saveShortAndUrl(string $url, string $code): bool
+    {
+        $entity = new Shortener($url, $code);
+        $this->getEntityManager()->persist($entity);
+        $this->getEntityManager()->flush();
 
+        return true;
+
+    }
 }

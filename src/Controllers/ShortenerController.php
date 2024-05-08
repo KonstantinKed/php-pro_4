@@ -2,24 +2,25 @@
 
 namespace App\Controllers;
 
-use App\ORM\DataMapper\Entity\Phone;
-use App\ORM\DataMapper\Entity\User;
-use App\ORM\DataMapper\Repositories\UserRepository;
+use App\ORM\DataMapper\Entity\Shortener;
+
+use App\ORM\DataMapper\Repositories\ShortenerRepository;
+
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 
-class UserController
+class ShortenerController
 {
     /**
-     * @var UserRepository
+     * @var ShortenerRepository
      */
-    protected EntityRepository $userRepo;
-    protected EntityRepository $phoneRepo;
+    protected EntityRepository $shortenerRepo;
 
     public function __construct(
         protected EntityManager $em)
     {
-        $this->userRepo = $this->em->getRepository(User::class);
+//        $this->userRepo = $this->em->getRepository(User::class);
+        $this->shortenerRepo = $this->em->getRepository(Shortener::class);
     }
     public function getInfo(int $id): string
     {

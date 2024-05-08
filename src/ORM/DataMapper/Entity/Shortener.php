@@ -13,10 +13,11 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ShortenerRepository::class)]
 #[ORM\Table(name: 'shortener')]
-#[PrivateProperties(['password', 'phones', 'status'])]
-class Shortener implements \JsonSerializable
+//#[PrivateProperties(['password', 'phones', 'status'])]
+//class Shortener implements \JsonSerializable
+class Shortener
 {
-    use JsonSerializableTrait;
+//    use JsonSerializableTrait;
 
     #[ORM\Id]
     #[ORM\Column(type: Types::INTEGER)]
@@ -45,20 +46,14 @@ class Shortener implements \JsonSerializable
         return $this->url;
     }
 
-    public function setUrl(string $url): void
-    {
-        $this->url = $url;
-    }
-
     public function getShortCode(): string
     {
         return $this->short_code;
     }
 
-    public function setShortCode(string $short_code): void
-    {
-        $this->short_code = $short_code;
-    }
+
+
+
 
 
 }

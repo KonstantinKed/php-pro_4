@@ -26,9 +26,9 @@ $em = $container->get(EntityManager::class);
 //$em->persist($phone2);
 
 
-$em->flush();
+//$em->flush();
 //
-//$userRepo = $em->getRepository(User::class);
+$userRepo = $em->getRepository(User::class);
 //$phoneRepo = $em->getRepository(Phone::class);
 //$user2 = new User('Сашко', 'dddd');
 //$em->persist($user2);
@@ -45,8 +45,8 @@ $em->flush();
 //$userRepo->save($user2);
 
 //$em->flush();
-//$phone = $phoneRepo->findOneBy(['id'=>1]);
-//echo $phone->getPhone() . ' - ' . $phone->getUser()->getLogin();
-//echo PHP_EOL;
+$phone = $phoneRepo->findOneBy(['id'=>1]);
+echo $phone->getPhone() . ' - ' . $phone->getUser()->getLogin();
+echo PHP_EOL;
 
 exit;
