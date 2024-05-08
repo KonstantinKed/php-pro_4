@@ -15,7 +15,7 @@ use Doctrine\ORM\EntityRepository;
 
 class ShortenerRepository extends EntityRepository implements ICodeSaver
 {
-//    use BaseRepository;
+    use BaseRepository;
 
     public function getById(int $id): object
     {

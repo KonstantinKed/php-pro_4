@@ -2,14 +2,21 @@
 
 namespace App\Controllers;
 
+use App\Core\Web\Interfaces\IWebController;
+use App\Core\Web\VO\Route;
 use App\ORM\DataMapper\Entity\Shortener;
 
 use App\ORM\DataMapper\Repositories\ShortenerRepository;
 
+use App\Shortener\SuportActions\CodeGenerator;
+use App\Shortener\SuportActions\SimpleUrlValidator;
+use App\Shortener\UrlEncodeDecode;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
+use GuzzleHttp\Client;
+use Random\RandomException;
 
-class ShortenerController
+class ShortenerController implements IWebController
 {
     /**
      * @var ShortenerRepository
@@ -22,30 +29,19 @@ class ShortenerController
 //        $this->userRepo = $this->em->getRepository(User::class);
         $this->shortenerRepo = $this->em->getRepository(Shortener::class);
     }
-    public function getInfo(int $id): string
-    {
-//        return 'info for ' . $id;
-        $user = $this->userRepo->getById($id);
-        return $user->getLogin() . ' - ' . $user->getStatus();
-    }
 
-    public function getAll() {
-        $users = $this->userRepo->findAll();
-        $result = '';
-        foreach ($users as $user) {
-            $result .= $user->getLogin() . ' - ' . $user->getStatus() . '<br>';
-        }
-        return $result;
+    /**
+     * @throws RandomException
+     */
+    public function action(string $url): string {
+        $urlValidator = new SimpleUrlValidator(new Client());
+        $codeGenerator = new CodeGenerator();
+        $result = new UrlEncodeDecode($urlValidator, $codeGenerator, $this->shortenerRepo);
+        return 'Скорочений код: ' . $result->encode($url);
     }
 
 
-    public function addPhone(int $id, string $phone): string {
-        $user = $this->userRepo->getById($id);
-        $p = new Phone($user, $phone);
-        $this->userRepo->save($p);
-//        return $user->getLogin() . ' - ' . $user->getPhones();
-        return $user->getLogin() . $this->phoneRepo->getPhone();
-    }
+
 
 
 
